@@ -60,15 +60,22 @@
 				type : 'POST',
 				success : function(data){
 					//여기서 결과를 보여준다.
-					alert(data);
 					var str="";
+					
+					console.log("data : " + data);
+					console.log(checkImageType(data));
+					
 					if(checkImageType(data)){
-						str ="<div>"
-						    +"<img src='displayFile?fileName="+data+"'/>"
-							+data+"</div>";
+					  str ="<div><a href=displayFile?fileName="+getImageLink(data)+">"
+					  +"<img src='displayFile?fileName="+data+"'/>"
+					  +"</a><small data-src="+data+">X</small></div>";						    
 					}else{
-						str = "<div>"+data+"</div>";
-					}
+						//썸네일이 아니면 파일 이름만 보여준다.
+						//str = "<div>"+data+"</div>";
+						str = "<div><a href='displayFile?fileName="+data+"'>"
+								+getOriginalName(data)+"</a>"
+								+"<small data-src="+data+">X</small></div></div>";
+								}
 					
 					$(".uploadedList").append(str);
 				}
@@ -80,22 +87,51 @@
 		function checkImageType(fileNmae){
 			var pattern = /jpg$|gif$|jpeg$/i;
 			var resultcheck = fileNmae.match(pattern);
-			console.log("resultcheck : " + resultcheck);
 			return resultcheck;
 		}
 		
-		//파일이름 
-		function getOriginalName(fileNmae){
-			if(checkImageType(fileName)){
+		//썸네일 파일이 아닌 일반파일일 경우 파일이름 
+		function getOriginalName(data){
+			console.log("data : " + data);
+			if(checkImageType(data)){
 				return;
 			}
-			
-			var idx = fileName.indexOf("_")+1;
+			var idx = data.indexOf("_")+1;
 			console.log("idx : " + idx);
 			
-			return fileName.substr(idx);
+			return data.substr(idx);
 		}
 		
+		//썸네일 이미지에서 _s를 제거하여 원본 이미지파일을 가져온다
+		function getImageLink(data){
+			if(!checkImageType(data)){
+				return;
+			}
+			// /년/월/일 경로를 추출
+			var front = data.substr(0,12);
+			// s_ 를 제거하는 용도
+			var end = data.substr(14);
+			console.log("front+end : " + front+end);
+			return front+end;
+		}
+		
+		// X버튼을 눌렀을때 첨부파일 삭제 처리 
+		$(".uploadedList").on("click","small",function(event){
+			var that=$(this);
+			
+			$.ajax({
+				url:'deleteFile',
+				type:'post',
+				data:{fileName:$(this).attr("data-src")},
+				dataType:'text',
+				success:function(result){
+					if(result=='deleted'){
+						alert("delete file");
+						that.parent("div").remove();
+					}
+				}
+			});
+		});
 	</script>
 	
 </body>

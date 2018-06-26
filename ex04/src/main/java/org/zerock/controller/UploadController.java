@@ -103,7 +103,7 @@ public class UploadController {
 	      if(mType != null){
 	        headers.setContentType(mType);
 	      }else{
-	        
+	        //일반파일들은 다운로드 가능하게 수정
 	        fileName = fileName.substring(fileName.indexOf("_")+1);       
 	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 	        headers.add("Content-Disposition", "attachment; filename=\""+ 
@@ -123,4 +123,28 @@ public class UploadController {
 	  }
 	    
 	
+	  //첨부파일의 삭제
+	  @ResponseBody
+	  @RequestMapping(value="/deleteFile",method=RequestMethod.POST)
+	  public ResponseEntity<String> deleteFile(String fileName){
+		  logger.info("delete file : " + fileName);
+		  //확장자 구하기
+		  String formatName = fileName.substring(fileName.lastIndexOf(".")+1);
+		  //확장자를 토대로 MediaType 구하기.
+		  MediaType mType = MediaUtils.getMediaType(formatName);
+		  
+		  if(mType !=null) {
+			// /년/월/일 경로를 추출
+			String front = fileName.substring(0, 12);
+			// s_ 를 제거하는 용도
+			String end = fileName.substring(14);
+			//파일 디렉토리에 있는 이미지 원본파일을 삭제한다.
+			new File(uploadPath+(front+end).replace('/',File.separatorChar)).delete();
+		  }
+		  
+		  //나머지 썸네일과 일반파일을 삭제한다.
+		  new File(uploadPath+fileName.replace('/', File.separatorChar)).delete();
+		  
+		  return new ResponseEntity<String>("deleted",HttpStatus.OK);
+	  }//end deleteFile
 }

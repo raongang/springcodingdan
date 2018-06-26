@@ -92,7 +92,8 @@ public class UploadFileUtils {
 		//FIT_TO_HEIGHT : 썸네일 이미지 파일의 높이를 뒤에 지정한 100px로 동일하게 만듬.
 		BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT,100);
 		
-		String thumnailName = uploadPath + path + File.separator + "s_ "+ fileName;
+		//원본파일과 썸네일파일의 차이는 중간의 s_ 를 구분자로 넣어준것.
+		String thumnailName = uploadPath + path + File.separator + "s_"+ fileName;
 		
 		logger.info("thumnailName : " + thumnailName);
 		
