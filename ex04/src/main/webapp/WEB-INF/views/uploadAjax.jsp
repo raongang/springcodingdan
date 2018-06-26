@@ -77,9 +77,9 @@
 		});
 		
 		//전송받은 문자열이 이미지 파일인지 아닌지 확인하는 작업 - 정규표현식을 이용.
-		function checkImageType(data){
+		function checkImageType(fileNmae){
 			var pattern = /jpg$|gif$|jpeg$/i;
-			var resultcheck = data.match(pattern);
+			var resultcheck = fileNmae.match(pattern);
 			console.log("resultcheck : " + resultcheck);
 			return resultcheck;
 		}
