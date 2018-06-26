@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+#modDiv {
+	width: 300px;
+	height: 100px;
+	background-color: gray;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -150px;
+	padding: 10px;
+	z-index: 1000;
+}
+
+.pagination {
+  width: 100%;
+}
+
+.pagination li{
+  list-style: none;
+  float: left; 
+  padding: 3px; 
+  border: 1px solid blue;
+  margin:3px;  
+}
+
+.pagination li a{
+  margin: 3px;
+  text-decoration: none;  
+}
