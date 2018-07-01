@@ -32,6 +32,15 @@
 
 	<context:component-scan base-package="org.zerock.controller" />
 	
+	<!-- 첨부파일 핸들링 추가 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10485760"></beans:property>
+	</beans:bean>
+	
+	<!-- 파일저장 경로 지정 -->
+	<beans:bean id="uploadPath" class="java.lang.String">
+		<beans:constructor-arg value="c:\\zzz\upload"></beans:constructor-arg>
+	</beans:bean>
 	
 	
 </beans:beans>

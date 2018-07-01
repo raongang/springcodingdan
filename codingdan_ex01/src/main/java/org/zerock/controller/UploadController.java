@@ -3,7 +3,6 @@ package org.zerock.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -15,15 +14,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.util.MediaUtils;
 import org.zerock.util.UploadFileUtils;
 
+@RequestMapping("/sboard/**")
 @Controller
 public class UploadController {
 	
@@ -32,45 +31,8 @@ public class UploadController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UploadController.class);
 	
-	@RequestMapping(value="/uploadForm", method=RequestMethod.GET)
-	public void uplaodForm() {
-		
-	}
-	
-	//MultipartFile -> POST 방식으로 들어오느 파일 데이터.
-	//iframe 이용
-	@RequestMapping(value="uploadForm", method=RequestMethod.POST)
-	public String uploadForm(MultipartFile file, Model model) throws Exception{
-		logger.info("originalName : " + file.getOriginalFilename());
-		logger.info("size : " + file.getSize());
-		logger.info("contentType : " + file.getContentType());
-		
-		String savedName = uploadFile(file.getOriginalFilename(),file.getBytes());
-		
-		model.addAttribute("savedName",savedName);
-		
-		return "uploadResult";
-	}
-	
-	private String uploadFile(String originalName, byte[] fileData) throws Exception{
-		UUID uid = UUID.randomUUID();
-	
-		String savedName = uid.toString() +"_"+ originalName;
-		File target = new File(uploadPath,savedName);
-		
-		FileCopyUtils.copy(fileData, target);
-		
-		return savedName;
-	}
-	
-	//ajax를 이용한 단일파일 업로드
-	
-	@RequestMapping(value="/uploadAjax", method=RequestMethod.GET)
-	public void uploadAjax() {
-	}
-	
 	@ResponseBody //리턴 타입을 Http응답형태로 전송.
-	@RequestMapping(value="uploadAjax", method=RequestMethod.POST , produces="text/plan;charset=UTF-8")
+	@RequestMapping(value="/uploadAjax", method=RequestMethod.POST , produces="text/plan;charset=UTF-8")
 	public ResponseEntity<String> uploadAjax(MultipartFile file) throws Exception{
 		logger.info("originalName : " + file.getOriginalFilename());
 		logger.info("size : " + file.getSize());
@@ -104,6 +66,7 @@ public class UploadController {
 	        headers.setContentType(mType);
 	      }else{
 	        //일반파일들은 다운로드 가능하게 수정
+	    	System.out.println("일반파일일 경우 다운로드를 할 수 있게 한다.");
 	        fileName = fileName.substring(fileName.indexOf("_")+1);       
 	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 	        headers.add("Content-Disposition", "attachment; filename=\""+ 
@@ -144,4 +107,34 @@ public class UploadController {
 		  
 		  return new ResponseEntity<String>("deleted",HttpStatus.OK);
 	  }//end deleteFile
+	  
+	  
+	  //삭제처리는 데이터베이스의 삭제와 업로드 되었던 첨부파일의 삭제 작업을 같이 진행한다.
+	  //@RequestParam - 기존 서블릿에서 request.getParameter()와 유사한 기능이다.
+	  @ResponseBody
+	  @RequestMapping(value="/deleteAllFiles", method=RequestMethod.POST)
+	  public ResponseEntity<String> deleteFile(@RequestParam("files[]") String[] files){
+		  logger.info("delete all files : " + files);
+		  
+		  if(files==null || files.length == 0) {
+			  return new ResponseEntity<String>("deleted",HttpStatus.OK);
+		  }
+		  
+		  for(String fileName: files) {
+			  String formatName = fileName.substring(fileName.lastIndexOf(".")+1);
+			  
+			  MediaType mType = MediaUtils.getMediaType(formatName);
+			  
+			  if(mType!=null) {
+				  String front = fileName.substring(0, 12);
+				  String end = fileName.substring(14);
+				  
+				  new File(uploadPath+(front+end).replace('/',File.separatorChar)).delete();
+			  }
+			  
+			  new File(uploadPath+fileName.replace('/', File.separatorChar)).delete();
+		  }
+		  
+		  return new ResponseEntity<String>("deleted",HttpStatus.OK);
+	  }
 }

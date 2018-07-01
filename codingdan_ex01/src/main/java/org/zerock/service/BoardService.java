@@ -26,6 +26,8 @@ public interface BoardService {
 
   public int listSearchCount(SearchCriteria cri) throws Exception;
   
+  //첨부파일 조회
+  public List<String> getAttach(Integer bno) throws Exception;
    
 
 }

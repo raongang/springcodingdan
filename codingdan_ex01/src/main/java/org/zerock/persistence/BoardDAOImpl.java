@@ -22,6 +22,15 @@ public class BoardDAOImpl implements BoardDAO{
 	//Mapper와 연결
 	private String namespace="org.zerock.mapper.BoardMapper";
 	
+	
+	@Override
+	public void addAttach(String fullName) throws Exception {
+		// TODO Auto-generated method stub
+		session.insert(namespace+".addAttach", fullName);
+	}
+
+	
+	
 	//페이지 관련
 	@Override
 	public List<BoardVO> listPage(int page) throws Exception {
@@ -114,8 +123,30 @@ public class BoardDAOImpl implements BoardDAO{
 		session.update(namespace+".updateViewCnt",paraMap);
 		
 	}
+
+
+	//특정 게시물의 첨부파일을 시간순서대로 가져오는 ..
+	@Override
+	public List<String> getAttach(Integer bno) throws Exception {
+		// TODO Auto-generated method stub
+		return session.selectList(namespace+".getAttach",bno);
+	}
 	
-	
-	
+	// 첨부파일이 포함된 화면에서 수정작업시 기존 첨부파일을 삭제하고 새롭게 첨부파일과 관련된 정보를 넣는다.
+	@Override
+	public void deleteAttach(Integer bno) throws Exception {
+		session.delete(namespace+".deleteAttach",bno);
+	}
+	@Override
+	public void replaceAttach(String fullName, Integer bno) throws Exception {
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		
+		System.out.println("service fullName : " + fullName);
+		
+		paraMap.put("bno", bno);
+		paraMap.put("fullName", fullName);
+		
+		session.insert(namespace+".replaceAttach",paraMap);
+	}
 
 }

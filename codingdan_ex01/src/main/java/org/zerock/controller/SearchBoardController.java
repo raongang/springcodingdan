@@ -1,16 +1,19 @@
 package org.zerock.controller;
 
+import java.util.List;
+
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.domain.BoardVO;
 import org.zerock.domain.PageMaker;
@@ -76,8 +79,9 @@ public class SearchBoardController {
 	//수정
 	@RequestMapping(value="/modifyPage", method=RequestMethod.GET)
 	public void modifyPaginGET(int bno, @ModelAttribute("scri") SearchCriteria scri, Model model) throws Exception{
-		
 		model.addAttribute(service.read(bno));
+		//첨부파일 보여주기
+		
 	}
 	
 	@RequestMapping(value="/modifyPage", method=RequestMethod.POST)
@@ -115,4 +119,26 @@ public class SearchBoardController {
 		
 		return "redirect:/sboard/list";
 	}
+	
+	//댓글과 마찬가지로 Ajax를 이용해서 현재 게시물의 첨부파일을 별도로 처리한다.
+	/**
+	 * JSON으로 처리하는 법 
+	 *   1) pom.xml에 jackson-databind 라이브러리 추가
+	 *   2) 스프링MVC 컨트롤러에서 JSON데이터를 생성하기 위해서 적절한 객체 반환 
+	 *   3) @ResponseBody 애노테이션 추가해주기 
+	 *   4) view단에서 $.getJSON으로 호출하기.
+	 * @param bno
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/getAttach/{bno}")
+	@ResponseBody
+	public List<String> getAttach(@PathVariable("bno") Integer bno) throws Exception{
+		logger.info("getAttach bno : " + bno);
+		
+		List<String> fileList = service.getAttach(bno);
+		
+		return fileList;
+	}
+	
 }

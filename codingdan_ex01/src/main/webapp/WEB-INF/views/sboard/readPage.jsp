@@ -5,6 +5,25 @@
 <script src="/resources/handlebars/handlebars-v4.0.11.js"></script> 
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>-->
 
+
+<!-- 일반파일은 컨트롤러에서 자동 MIME 타입을 다운로드하기 때문에 문제 없음.
+           이미지의 경우 화면이 전환되면서 보여지기 때문에, 별도의 처리 필요
+	 원본 이미지의 경우 css를 이용해서 화면의 맨 앞쪽으로 보여지게 처리하고, 일반파일의 경우 다운로드 할 수 있게 처리한다.
+-->
+<%-- 이미지를 보여주기 위해 화면상에 숨겨진 div를 작성한다. 클릭시 원본 사이즈로 보여짐 --%>
+
+<style type="text/css">
+ .popup { position: absolute; }
+ .back { backgroud-color: gray; opacity: 0.5; width: 100%; height: 300%; overflow:hidden; z-index:1001;}
+ .front { z-index: 1110; opacity: 1; border: 1px; margin: auto;}
+ .show { position:relative; max-width:1200px; max-height:800px; overlfow:auto;}
+</style>
+
+<div class="popup back" style="display:none;"></div>
+<div id="popup_front" class="popup front" style="display:none;">
+	<img id="popup_img">
+</div>
+
 <!-- Main content -->
 <section class="content">
 	<div class="row">
@@ -46,6 +65,11 @@
 				<!-- /.box-body -->
 
 			  <div class="box-footer">
+			  	
+			  	<!-- 첨부파일 목록 표시. -->
+			  	<div><hr></div>
+			  	<ul class="mailbox-attachments clearfix uploadedList"></ul>
+			  
 			    <button type="submit" class="btn btn-warning" id="modifyBtn">Modify</button>
 			    <button type="submit" class="btn btn-danger" id="removeBtn">REMOVE</button>
 			    <button type="submit" class="btn btn-primary" id="goListBtn">GO LIST </button>
@@ -122,10 +146,21 @@
 		</div>
 	</div>
 	
-	
 </section>
-<!-- /.content -->
 
+<script id="templateAttach" type="text/x-handlebars-template">
+<li data-src='{{fullName}}'>
+  <span class="mailbox-attachment-icon has-img"><img src="{{imgsrc}}" alt="Attachment"></span>
+  <div class="mailbox-attachment-info">
+	<a href="{{getLink}}" class="mailbox-attachment-name">{{fileName}}</a>
+	</span>
+  </div>
+</li>                
+</script>  
+
+
+<!-- /.content -->
+<script type="text/javascript" src="/resources/js/upload.js"></script>
 <script id="template" type="text/x-handlebars-template">
 {{#each .}}
 <li class="replyLi" data-rno={{rno}}>
@@ -309,13 +344,49 @@
 	
 </script>
 
+<script>
+	var bno = ${list.bno};
+	var template = Handlebars.compile($("#templateAttach").html());
+	//컨트롤러 호출.
+	$.getJSON("/sboard/getAttach/"+bno,function(data){
+		
+		$(data).each(function(){
+			var fileInfo = getFileInfo(this);
+			var html = template(fileInfo);
+			
+			$(".uploadedList").append(html);
+		});
+		
+	});
+	
+	//첨부파일이 이미지 파일인 경우는 원본파일의 경로를 특정한 <div>에 <img>객체로 만들어서 넣은 후 해당 <div>를 맨 앞으로 보여주게 처리
+	$(".uploadedList").on("click", ".mailbox-attachment-info a" , function(event){
+		var fileLink = $(this).attr("href");
+		console.log("var fileLink = $(this).attr('href') : " + fileLink);
+		//이미지이면
+		if(checkImageType(fileLink)){
+			event.preventDefault();
+			
+			var imgTag = $("#popup_img");
+			//현재 클릭한 이미지의 경로를 id속성값이 popup_img인 요소에 추가.
+			imgTag.attr("src",fileLink);
+			
+			console.log(imgTag.attr("src"));
+			
+			$(".popup").show('slow');
+			imgTag.addClass("show");
+		}
+	});
+	
+	$("#popup_img").on("click",function(){
+		$(".popup").hide('slow');
+	});	
+</script>
 
 <script>
 $(document).ready(function(){
 	
 	var formObj = $("form[role='form']");
-	
-	console.log(formObj);
 	
 	$("#modifyBtn").on("click", function(){
 		formObj.attr("action", "/sboard/modifyPage");
@@ -324,9 +395,38 @@ $(document).ready(function(){
 	});
 	
 	$("#removeBtn").on("click", function(){
-		formObj.attr("action", "/sboard/removePage");
+		//formObj.attr("action", "/sboard/removePage");
+		//formObj.submit();
+		
+		var findReplyCnt = $("#replycntSmall").html();
+		console.log("findReplyCnt[$('#replycntSmall').html()] : " + findReplyCnt);
+		
+		//^0 : 0으로 시작하는 단어의 맨 앞만 찾는다. 
+		//[^0-9] : 0으로 시작하는 단어의 맨 앞부터 9까지를 찾는다.
+		//[^0-9]/g : 0으로 시작하는 단어의 맨 앞부터 9까지 찾는데, 검색패턴을 비교할때 일치하는 모든 부분을 선택하도록 설정한다.
+		var replyCnt = findReplyCnt.replace(/[^0~9]/g,"");
+		console.log("replyCnt[findReplyCnt.replace(/[^0~9]/g,'')] : " + replyCnt);
+		if(replyCnt >0){
+			alert("댓글이 달린 게시물은 삭제 할 수 없습니다.");
+		}
+		
+		var arr =[];
+		$(".uploadedList li").each(function(index){
+			arr.push($(this).attr("data-src"));
+		});
+		
+		if(arr.length>0){
+			$.post(
+				"/sboard/deleteAllFiles",
+				{files:arr},
+				function(){
+				});
+		}
+		
+		formObj.attr("action","/sboard/removePage");
 		formObj.submit();
 	});
+		
 	
 	$("#goListBtn ").on("click", function(){
 		formObj.attr("method", "get");
@@ -334,12 +434,9 @@ $(document).ready(function(){
 		formObj.submit();
 	});
 	
+	
 });
 </script>
-
-
-
-
 
 
 <%@include file="../include/footer.jsp"%>

@@ -6,7 +6,6 @@
 
 <%@include file="../include/header.jsp"%>
 
-
 <!-- Main content -->
 <section class="content">
 	<div class="row">
@@ -112,11 +111,9 @@
 	</div> <!-- /.row -->
 </section>
 <!-- /.content -->
-
-
 <script>
+//제일 마지막에 호출됨.
 $(document).ready( function() {
-
 			$("#searchBtn").on(
 					"click", function(event) {
 
@@ -131,19 +128,16 @@ $(document).ready( function() {
 			$("#newBtn").on("click", function(evt) {
 				self.location = "register";
 			});
+			
+			var result = '${result}'
+
+			//대소문자 구분
+			if (result == 'success'){
+				alert("처리가 완료되었습니다.");
+				location.replace(self.location);
+			}
 		});
-
 </script>
-
-<script>
-	var result = '${result}'
-
-	//대소문자 구분
-	if (result == 'success')
-		alert("처리가 완료되었습니다.");
-</script>
-
-
 <!-- 검색 처리 스크립트 -->
 <%@include file="../include/footer.jsp"%>
 

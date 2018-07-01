@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
+<head>"src/main/webapp/WEB-INF/views/uploadAjax.jsp"
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 
@@ -25,10 +25,9 @@
 	<div class="fileDrop"></div>
 	<div class="uploadedList"></div>
 
+
 	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-	
 	<!-- HTML5  https://www.w3schools.com/html/html5_draganddrop.asp -->
-	
 	<script>
 		$(".fileDrop").on("dragenter dragover", function(event){
 			event.preventDefault();
@@ -75,7 +74,7 @@
 						str = "<div><a href='displayFile?fileName="+data+"'>"
 								+getOriginalName(data)+"</a>"
 								+"<small data-src="+data+">X</small></div></div>";
-								}
+								} 
 					
 					$(".uploadedList").append(str);
 				}

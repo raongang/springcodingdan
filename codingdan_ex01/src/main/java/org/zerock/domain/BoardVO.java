@@ -12,6 +12,15 @@ public class BoardVO {
 	
 	private int replycnt;
 	
+	//파일 첨부기능
+	private String[] files;
+	
+	public String[] getFiles() {
+		return files;
+	}
+	public void setFiles(String[] files) {
+		this.files = files;
+	}
 	public Integer getBno() {
 		return bno;
 	}

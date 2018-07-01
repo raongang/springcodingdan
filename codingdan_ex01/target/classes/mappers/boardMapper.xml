@@ -136,4 +136,26 @@
   	<update id="updateViewCnt">
   		update tbl_board set viewcnt = viewcnt + #{amount} where bno=#{bno}
   	</update>
-  </mapper>
+  	
+  	<!-- 첨부파일의 업로드 -->
+  	<!-- oracle의 경우 시퀀스를 이용하므로 시퀀스명.currval로 시퀀스명을 가져올수 있지만, Mysql의 auto_increment는 칼럼의
+  	     데이터등록시 칼럼의 값이 생성되므로 바로 이전에 등록된 번호를 가져오는 LAST_INSERT_ID()를 이용한다
+  	 -->
+  	<insert id="addAttach">
+  		insert into tbl_attach(fullname,bno) values (#{fullNmae}, LAST_INSERT_ID())
+  	</insert>
+  	
+  	<select id="getAttach" resultType="string">
+  		select fullname from tbl_attach where bno = #{bno} order by regdate
+  	</select>
+  	
+  	<!-- 첨부파일이 포함된 화면에서 수정작업시 기존 첨부파일을 삭제하고 새롭게 첨부파일과 관련된 정보를 넣는다. -->
+  	<delete id="deleteAttach">
+  		delete from tbl_attach where bno = #{bno}
+  	</delete>
+  	
+  	<insert id="replaceAttach">
+  		insert into tbl_attach(fullname,bno) value (#{fullName},#{bno}) 
+  	</insert>
+  	
+</mapper>
