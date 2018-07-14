@@ -8,6 +8,8 @@ create table tbl_member(
     primary key(userid)
     );
   
+
+--댓글 테이블
 create table tbl_reply ( 
 	rno int not null auto_increment,
     bno int not null default 0,
@@ -22,6 +24,7 @@ create table tbl_reply (
  alter table tbl_reply add constraint fk_board foreign key ( bno ) references tbl_board(bno);
  update tbl_board set replycnt = ( select count(rno) from tbl_reply where bno=tbl_board.bno) where bno>0;
  
+ -- 게시판 테이블
  create table tbl_board (
 	bno INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(200) NOT NULL,
@@ -31,8 +34,10 @@ create table tbl_reply (
     viewcnt INT DEFAULT 0,
     PRIMARY KEY(bno));
     
+
+alter table tbl_board add column replycnt int default 0;    
     
- -- 파일첨부 테이블 추가.
+ -- 파일첨부 테이블 
  create table tbl_attach (
 	fullName varchar(150) not null,
     bno int not null,
@@ -43,10 +48,25 @@ create table tbl_reply (
  
  alter table tbl_attach add constraint fk_board_attach foreign key (bno) references tbl_board(bno);
  
- select * from tbl_attach;
- 
 -- 외래키 확인 
 select * from information_schema.table_constraints where table_name = 'tbl_attach';
+
+
+-- 로그인 처리를 위한 사용자 정보
+create table tbl_user(
+	uid varchar(50) not null,
+    upw varchar(50) not null,
+    uname varchar(100) not null,
+    upoint int not null default 0,
+    primary key(uid)
+);
+
+insert into tbl_user(uid,upw,uname) values('user00','user00','IRON-MAN');
+insert into tbl_user(uid,upw,uname) values('user01','user01','CAPTAIN');
+insert into tbl_user(uid,upw,uname) values('user02','user02','HULK');
+insert into tbl_user(uid,upw,uname) values('user03','user03','Thor');
+insert into tbl_user(uid,upw,uname) values('user10','user10','Quick Silver');
+
 
 
  

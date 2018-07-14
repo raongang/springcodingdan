@@ -42,5 +42,37 @@
 		<beans:constructor-arg value="c:\\zzz\upload"></beans:constructor-arg>
 	</beans:bean>
 	
+	<!-- 인터셉터 설정
+	<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	이런식으로 namespace가 정의안되어 있으면 아래와 같이 작성 
+	 -->
+	 <beans:bean id="authInterceptor" class="org.zerock.interceptor.AuthInterceptor"></beans:bean> 
+     <beans:bean id="loginInterceptor" class="org.zerock.interceptor.LoginInterceptor"></beans:bean>
+     <interceptors>
+           <interceptor>
+                <mapping path="/user/loginPost"/>
+                <beans:ref bean="loginInterceptor"/>      
+           </interceptor>
+           
+           <interceptor>
+           		<mapping path="/sboard/register" />
+           		<beans:ref bean="authInterceptor" />
+           </interceptor>
+     </interceptors>
+
+
+
+	<!-- 인터셉터 설정 끝 : xmlns:mvc="http://www.springframework.org/schema/mvc" 이 부분 선언되어야 한다.
+	     사실상 위의 설정과 같은 의미이다. 젤 위에 beans설정에 따라 차이가 있을뿐. 
+	   여기서는 mvc로 정의를 했기 때문에 mvc:interceptor를 사용하는 것이다. 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<beans:bean id="sampleInterceptor" class="org.zerock.interceptor.SampleInterceptor"></beans:bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	-->	
+	
+
 	
 </beans:beans>
