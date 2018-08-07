@@ -2,6 +2,7 @@ package org.zerock.interceptor;
 
 import java.lang.reflect.Method;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,7 +42,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		// TODO Auto-generated method stub
 		
-		logger.info("prehandle enter");
+		logger.info("LoginInterceptor prehandle enter");
 		
 		HandlerMethod method = (HandlerMethod)handler;
 		Method methodObj = method.getMethod();
@@ -58,10 +59,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 		return true;
 		
 	}
+	
+	/**
+	 *  자동 로그인과 쿠키기능 추가.
+	 *   - 쿠키는 보안적으로 취약하지만 적극적으로 활용하게 된 계기는 모바일에서 매번 로그인하기가 힘들다는 문제에 대한 대안으로 사용되면서부터이다.
+	 *   따라서, 로그인한 후 쿠키를 만들어서 브라우저로 전송하고, 다시 서버에 접속할 때 쿠키가 전달되는지 확인하는 소스를 추가한다.
+	 */
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 		// TODO Auto-generated method stub
-		logger.info("postHandle enter");
+		logger.info("LoginInterceptor postHandle enter");
 		
 		HttpSession session = request.getSession();
 		ModelMap modelMap = modelAndView.getModelMap();
@@ -70,13 +77,29 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 		if(userVO !=null) {
 			logger.info("new loginSuccess");
 			session.setAttribute(LOGIN, userVO);
-			response.sendRedirect("/sboard/list");
-			//Object dest = session.getAttribute("dest");
-			//System.out.println((String)dest);
-			//response.sendRedirect(dest!=null?(String)dest:"/");
+			
+			System.out.println("request.getParameter('useCookie') : " + request.getParameter("useCookie"));
+			
+			if(request.getParameter("useCookie") != null) {
+				System.out.println("userCookie : " + request.getParameter("useCookie"));
+				Cookie loginCookie = new Cookie("loginCookie",session.getId());
+				/*쿠키가 유효한 디렉토리 정보 설정
+				 * cookie.setPath("유효디렉토리");  "/"일 경우 해당 도메인에 모든 페이지에서 유효
+				*/
+				loginCookie.setPath("/");
+				//7일유효
+				loginCookie.setMaxAge(60*60*24*7);
+				response.addCookie(loginCookie);
+			}
+			//response.sendRedirect("/sboard/list");
+			Object dest = session.getAttribute("dest");
+			System.out.println("dest : " + (String)dest);
+			response.sendRedirect(dest!=null?(String)dest:"/sboard/list");
+		/*
 		}else {
 			logger.info("userVo null");
 			response.sendRedirect("/");
+		 */
 		}
 		
 	}

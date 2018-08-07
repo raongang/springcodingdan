@@ -56,7 +56,11 @@
 							<textarea class="form-control" name="content" rows="3" placeholder="Enter ..."></textarea>
 						</div>
 						<div class="form-group">
+							<!-- 
 							<label for="exampleInputEmail1">Writer</label> <input type="text" name="writer" class="form-control" placeholder="Enter Writer">
+							 -->
+							 <!-- jsp에서 사용하는 EL의 경우 자동으로 HttpSession에 있는 'login'을 찾아서 사용하므로 '${login.uid}형태로 사용 가능. -->
+							 <label for="exampleInputEmail1">Writer</label> <input type="text" name="writer" class="form-control" value="${login.uid }" readonly />
 						</div>
 
 						<!-- 첨부파일 처리부분 -->
