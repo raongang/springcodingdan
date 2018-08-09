@@ -1,5 +1,9 @@
 package org.zerock.persistence;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
@@ -27,5 +31,29 @@ public class UserDAOImpl implements UserDAO{
 		// TODO Auto-generated method stub
 		return session.selectOne(namespace+".login",dto);
 	}
+
+
+	//로그인시에 session을 만드는데 이때 sessionId를 저장한다.
+	@Override
+	public void keepLogin(String uid, String sessionId, Date next) {
+		// TODO Auto-generated method stub
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		paraMap.put("uid", uid);
+		paraMap.put("sessionId", sessionId);
+		paraMap.put("next", next);
+		
+		session.update(namespace+".keepLogin",paraMap);
+	}
+
+
+	@Override
+	public UserVO checkUserWithSessionKey(String value) {
+		// TODO Auto-generated method stub
+		
+		return session.selectOne(namespace+".checkUserWithSessionKey",value);
+		
+	}
+	
+	
 
 }

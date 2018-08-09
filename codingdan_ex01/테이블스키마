@@ -67,6 +67,9 @@ insert into tbl_user(uid,upw,uname) values('user02','user02','HULK');
 insert into tbl_user(uid,upw,uname) values('user03','user03','Thor');
 insert into tbl_user(uid,upw,uname) values('user10','user10','Quick Silver');
 
+-- 자동 로그인의 구현을 위한 tbl_user table 수정
+alter table tbl_user add column sessionkey varchar(50) not null default 'none';
 
+alter table tbl_user add column sessionlimit timestamp;
 
  

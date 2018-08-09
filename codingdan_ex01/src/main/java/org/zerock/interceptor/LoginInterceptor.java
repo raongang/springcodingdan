@@ -2,6 +2,7 @@ package org.zerock.interceptor;
 
 import java.lang.reflect.Method;
 
+import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.zerock.service.UserService;
 
 /**
  * 
@@ -31,13 +33,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 	private static final String LOGIN= "login";
+
 	
 	/*	지정된 컨트롤러의 동작이전에 가로챈다.
     	리턴 타입 : 다음 인터셉터나 대상 컨트롤러를 호출하도록 할 것인지를 결정한다.
   		Object handler : 현재 실행할려는 메소드자체
 	 */
-
-	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		// TODO Auto-generated method stub
