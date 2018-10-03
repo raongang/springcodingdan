@@ -9,4 +9,5 @@ public interface MessageDAO {
 	public MessageVO readMessage(Integer mid) throws Exception;
 	
 	public void updateState(Integer mid) throws Exception;
+
 }

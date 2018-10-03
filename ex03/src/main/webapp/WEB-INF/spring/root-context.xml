@@ -6,60 +6,96 @@
 	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
 		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-	
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<!--  여긴 주로  view와 Controller를 제외한.. -->
-	<context:component-scan base-package="org.zerock.persistence" />
+	<!-- 여긴 주로 view와 Controller를 제외한.. -->
+	<context:component-scan
+		base-package="org.zerock.persistence" />
 	<!-- Service를 인식할수 있게 설정. -->
-	<context:component-scan base-package="org.zerock.service" />	
-	
+	<context:component-scan
+		base-package="org.zerock.service" />
+
 	<!-- aop 인식 -->
-	<context:component-scan base-package="org.zerock.aop" />	
-	
+	<context:component-scan
+		base-package="org.zerock.aop" />
+
 	<!-- 자동으로 AOP Proxt 객체 생성 -->
 	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
-	
-	<!-- DataSource 등록 --> 
-	
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<!-- 
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		 -->
-		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
-		<property name="url" value="jdbc:log4jdbc:mysql://127.0.0.1:3306/boot_coding?useSSL=false" />
+
+	<!-- DataSource 등록 -->
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<!-- <property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+		<property name="driverClassName"
+			value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
+		<property name="url"
+			value="jdbc:log4jdbc:mysql://127.0.0.1:3306/boot_coding?useSSL=false" />
 		<property name="username" value="ykh" />
 		<property name="password" value="raongang" />
 	</bean>
-	
-	<!-- SqlSessionFactory : myBatis와 spring연동을 위함.
-	     데이터베이스의 연결과(Connection)과 SQL의 실행에 대한 모든 것을 가진 중요 객체이다.
-	     이는 SqlSessionFactoryBean 이라는 클래스를 이용한다. 
-	 -->
-	<bean id="SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+
+	<!-- SqlSessionFactory : myBatis와 spring연동을 위함. 데이터베이스의 연결과(Connection)과 
+		SQL의 실행에 대한 모든 것을 가진 중요 객체이다. 이는 SqlSessionFactoryBean 이라는 클래스를 이용한다. -->
+	<bean id="SqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:/mybatis-config.xml" />
+		<property name="configLocation"
+			value="classpath:/mybatis-config.xml" />
 		<!-- myBatis-Spring에서 XML Mapper 인식 -->
-		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>
+		<property name="mapperLocations"
+			value="classpath:mappers/**/*Mapper.xml"></property>
 	</bean>
-	
-	
-	<!-- myBatis-spring jar에서 제공하는 SqlSessionTemplate는 MyBatis의 SqlSession인터페이스를 구현한 클래스로 기본적인 트랜잭션의 관리나 
-	     쓰레드 처리의 안정성 등을 보장해 주고, 데이터베이스의 연결과 종료를 책임진다.
-	 -->
-	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
-		<constructor-arg name="sqlSessionFactory" ref="SqlSessionFactory"></constructor-arg>
+
+
+	<!-- myBatis-spring jar에서 제공하는 SqlSessionTemplate는 MyBatis의 SqlSession인터페이스를 
+		구현한 클래스로 기본적인 트랜잭션의 관리나 쓰레드 처리의 안정성 등을 보장해 주고, 데이터베이스의 연결과 종료를 책임진다. -->
+	<bean id="sqlSession"
+		class="org.mybatis.spring.SqlSessionTemplate"
+		destroy-method="clearCache">
+		<constructor-arg name="sqlSessionFactory"
+			ref="SqlSessionFactory"></constructor-arg>
 	</bean>
+
+	<!-- 선언적 트랜잭션 - Annotation 방식
+	     이 설정과 함께, 트랜잭션 적용메소드에 @Transactional 를 붙인다.
 	
-	<!-- transaction manager 설정 -->
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"></property>
-	</bean> 
-	<tx:annotation-driven />
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
+		<property name="dataSource" ref="dataSource"></property> </bean> 
+	<tx:annotation-driven /> 
+	-->
+
+	<!-- 선언적 트랜잭션 bean정의 방식 -->
+	<!-- transaction manager 정의 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 임의의 패키지, 클래스 및 인터페이스의 끝에 Service가 있는 모든 것을 지정한다. -->
+	<aop:config>
+		<aop:advisor advice-ref="transactionAdvice"
+			pointcut="execution(* *..*Service.*(..))" />
+	</aop:config>
 	
+	<!-- transcation 정의 정보
+	     transaction 정의정보는 메소드 단위로 지정해야 한다.
+	     tx스키마를 이용 advice를 설정한다. 
+	-->
+	<tx:advice id="transactionAdvice"
+		transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="addMessage*" propagation="REQUIRED"
+				isolation="READ_COMMITTED" timeout="10" read-only="false"
+				rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+
 </beans>

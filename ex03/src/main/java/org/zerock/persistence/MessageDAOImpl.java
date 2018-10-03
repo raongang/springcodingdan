@@ -20,6 +20,7 @@ public class MessageDAOImpl implements MessageDAO{
 		session.insert(namespace+".create",vo);
 	}
 
+
 	@Override
 	public MessageVO readMessage(Integer mid) throws Exception {
 		// TODO Auto-generated method stub

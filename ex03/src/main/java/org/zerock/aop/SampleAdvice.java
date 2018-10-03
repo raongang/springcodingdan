@@ -1,12 +1,13 @@
 package org.zerock.aop;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -71,4 +72,30 @@ public class SampleAdvice {
 		
 		return result;
 	}
+	
+	//복수의 예외처리
+	/*SQLException 발생시 someTrouble, anyTrouble, trouble모두 동작
+	 *  advice로 잡을려는 예외를 상속한 예외는 모두 잡아서 동작.
+	 */
+	@AfterThrowing(value="execution(* *..*Service.*(..))", throwing="ex")
+	public void someTrouble(Throwable ex) {
+		//메소드 호출이 예외를 던졌을때 발생하는 advice 
+		System.out.println("*** Throwable!");
+		System.out.println(ex.getMessage());
+	}
+	
+	@AfterThrowing(value="execution(* *..*Service.*(..))", throwing="ex")
+	public void anyTrouble(SQLException ex) {
+		//메소드 호출이 예외를 던졌을때 발생하는 advice 
+		System.out.println("*** SQLException");
+		System.out.println(ex.getMessage());
+	}
+	
+	@AfterThrowing(value="execution(* *..*Service.*(..))", throwing="ex")
+	public void trouble(JoinPoint jp, Exception ex) {
+		//메소드 호출이 예외를 던졌을때 발생하는 advice 
+		System.out.println("*** Exception");
+		System.out.println("method : " + jp.toShortString());
+		System.out.println(ex.toString());
+	}	
 }

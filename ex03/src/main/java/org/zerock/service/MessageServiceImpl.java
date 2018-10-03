@@ -22,11 +22,17 @@ public class MessageServiceImpl implements MessageService{
 	private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 	
 	
-	@Transactional
+	//@Transactional
 	@Override
 	public void addMessage(MessageVO vo) throws Exception {
 		// TODO Auto-generated method stub
 		logger.info("addMessage Enter");
+		
+		logger.info(vo.getTargetid());
+		logger.info(vo.getSender());
+		logger.info(vo.getMessage());
+		
+		
 		messageDAO.create(vo);
 		pointDAO.updatePoint(vo.getSender(), 10);
 	}
