@@ -40,6 +40,7 @@ public class UploadFileUtils {
 		
 		logger.info("uplaodFileName : " + uplaodFileName);
 		
+		System.out.println("uploadFileName : " + uplaodFileName);
 		return uplaodFileName;
 	}
 	

@@ -9,7 +9,6 @@
 	width : 1px;
 	height : 1px;
 	border : 1px
-	
 	}
 </style>
 

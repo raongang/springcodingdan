@@ -1,0 +1,10 @@
+1. 개요
+  - 스프링을 이용한 파일 업로드,다운로드
+  
+2. 수정사항
+  - IE에서 다운로드가 되지 않은 문제점 수정
+  - 한글파일의 경우  아래와 같은 에러 발생에 대한 수정
+    java.lang.IllegalArgumentException: Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986
+  - 브라우저별 한글파일이름 인코딩 기능 추가.
+  
+    

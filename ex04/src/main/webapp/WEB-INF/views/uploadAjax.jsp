@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>"src/main/webapp/WEB-INF/views/uploadAjax.jsp"
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 
@@ -25,9 +25,10 @@
 	<div class="fileDrop"></div>
 	<div class="uploadedList"></div>
 
-
 	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	
 	<!-- HTML5  https://www.w3schools.com/html/html5_draganddrop.asp -->
+	
 	<script>
 		$(".fileDrop").on("dragenter dragover", function(event){
 			event.preventDefault();
@@ -64,17 +65,22 @@
 					console.log("data : " + data);
 					console.log(checkImageType(data));
 					
+					/** 주의사항 
+					    The valid characters are defined in RFC 7230 and RFC 3986 에러 발생시
+					    encodeURIComponent 를 사용해야 함. 주로 한글파일일 경우 발생함.
+					*/
+					
 					if(checkImageType(data)){
 					  str ="<div><a href=displayFile?fileName="+getImageLink(data)+">"
-					  +"<img src='displayFile?fileName="+data+"'/>"
+					  +"<img src='displayFile?fileName="+encodeURIComponent(data)+"'/>"
 					  +"</a><small data-src="+data+">X</small></div>";						    
 					}else{
 						//썸네일이 아니면 파일 이름만 보여준다.
 						//str = "<div>"+data+"</div>";
-						str = "<div><a href='displayFile?fileName="+data+"'>"
+						str = "<div><a href='displayFile?fileName="+encodeURIComponent(data)+"'>"
 								+getOriginalName(data)+"</a>"
 								+"<small data-src="+data+">X</small></div></div>";
-								} 
+								}
 					
 					$(".uploadedList").append(str);
 				}
@@ -82,9 +88,18 @@
 			
 		});
 		
-		//전송받은 문자열이 이미지 파일인지 아닌지 확인하는 작업 - 정규표현식을 이용.
+		//전송받은 문자열이 이미지 파일인지 아닌지 확인하는 작업 - 자바스크립트 정규표현식(regular expression)을 이용.
+		/*
+		   정규표현식
+		    - /로 시작해서 /로 끝난다.
+		    - 옵션으로 i가 들어가면 대소문자 구분안한다.
+		    - 
+		*/
+		
 		function checkImageType(fileNmae){
 			var pattern = /jpg$|gif$|jpeg$/i;
+			
+			//개수를 구할려면 fileName.search(pattern); 
 			var resultcheck = fileNmae.match(pattern);
 			return resultcheck;
 		}
@@ -97,7 +112,6 @@
 			}
 			var idx = data.indexOf("_")+1;
 			console.log("idx : " + idx);
-			
 			return data.substr(idx);
 		}
 		

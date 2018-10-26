@@ -32,9 +32,6 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-				
-				
-				
 		<!-- 파일의 추가 라이브러리 -->
 		<dependency>
 			<groupId>org.imgscalr</groupId>
@@ -123,6 +120,9 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
+		
+		
+		
 	
 		<!-- Test -->
 		<dependency>
