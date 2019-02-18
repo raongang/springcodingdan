@@ -1,8 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 	
-	<!-- Root Context: defines shared resources visible to all other web components -->
+			
+	<!-- DataSource 등록 --> 
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/boot_coding?serverTimezone=UTC" />
+		<property name="username" value="ykh" />
+		<property name="password" value="raongang" />
+	</bean>
+	
+	
+	
+	<!-- MyBatis설정 -->
+	<!-- SqlSessionFactory : myBatis와 spring연동을 위함.
+	     데이터베이스의 연결과(Connection)과 SQL의 실행에 대한 모든 것을 가진 중요 객체이다.
+	     이는 SqlSessionFactoryBean 이라는 클래스를 이용한다. 
+	     
+	     Mapper 인터페이스 : myBatis는 DB의 컬럼과 VO의 데이터를 매핑하기 위한 맵퍼라는 기능 제공
+    -->
+	<bean id="SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- dao와 같은 데이터접근객체대신 mapper를 직접등록
+	<bean id="sampleMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.raongang.persistence.SampleMapper"/>
+		<property name="sqlSessionFactory" ref="SqlSessionFactory" />
+	</bean> 
+	 -->
+	<!-- 위의 설정은 매번 Mapper 인터페이스를 작성할때마다 진행하기 때문에 번거롭다.
+		 MyBatis는 이를 자동으로 처리할 수 있는 Mapper-Scan기능을 제공
+		 mybatis-spring을 이용할 경우 아래 설정으로 모든 작업 완료
+		 mybatis-spring:scan은 자동으로 해당 패키지안에 인터페이스를 Mapper로 인식해준다.
+	 -->	
+	<mybatis-spring:scan base-package="com.raongang.persistence" />
 		
 </beans>
+
+
+
+
