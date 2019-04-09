@@ -43,6 +43,13 @@
 			
 			var file = files[0];
 			
+			//2019-04-09 raongang 다중 업로드시
+			/*
+			for(var i=0; i<files.length; i++){
+				console.log("file >> " + files[i]);
+				formData.append("files",files[i]);
+			}*/
+			
 			//console.log(file);
 			
 			//HTML5에서 추가된 기능으로, <form>태그로 만든 데이터의 전송방식과 동일하게 파일 데이터를 전송할 수 있다.
@@ -53,7 +60,7 @@
 			$.ajax({
 				url : '/uploadAjax',
 				data : formData,
-				dataType : 'text',
+				dataType : 'text', // 다중 업로드시 'json'
 				//formData 객체에 있는 파일 데이터를 전송하기 위해 false필수
 				processData : false, //데이터를 일반적인 query string으로 변환할 것인지를 결정.
 				contentType : false, //파일의 경우 multipart/form-data방식으로 전송하기 위해서 무조건 false
@@ -64,6 +71,13 @@
 					
 					console.log("data : " + data);
 					console.log(checkImageType(data));
+					
+					//2019-04-09 raongang 다중 업로드시 여기 구문이 아래처럼 값을 읽어와야 한다.
+					 /*for(var i = 0; i < arr.length; i++){
+					      var data = arr[i];
+					      var str ="";
+					*/
+					
 					
 					/** 주의사항 
 					    The valid characters are defined in RFC 7230 and RFC 3986 에러 발생시
