@@ -55,6 +55,28 @@ public class UploadController {
 		return "uploadResult";
 	}
 	
+	//2019-04-09 add Multipart 다중 파일 처리예시
+	/*
+	 @ResponseBody
+	  @RequestMapping(value ="/uploadAjax", method=RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	  public ResponseEntity<List<String>> uploadAjaxForm( @RequestParam("files") MultipartFile[] files)throws Exception{
+		logger.info("===================================");
+		
+		List<String> list = new ArrayList<String>();
+		for (MultipartFile multipartFile : files) {
+			
+			logger.info(multipartFile.getName());
+			
+			list.add(UploadFileUtils.uploadFile(uploadPath, 
+					multipartFile.getOriginalFilename(), 
+					multipartFile.getBytes()));
+		}
+	    return 
+	      new ResponseEntity<>(list,HttpStatus.CREATED);
+	  }  
+	*/
+	
+	
 	private String uploadFile(String originalName, byte[] fileData) throws Exception{
 		UUID uid = UUID.randomUUID();
 	
